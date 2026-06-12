@@ -5,8 +5,12 @@ import CategoryDirectory from "../components/CategoryDirectory";
 import SiteFooter from "../components/SiteFooter";
 import { preloadBookCovers } from "../data/catalog";
 
-export default function HomePage({ activeCategory, setActiveCategory, books, addToCart, cart }) {
-  const sectionTitle = activeCategory === "home" ? "Featured Books" : activeCategory;
+export default function HomePage({ activeCategory, setActiveCategory, books, addToCart, cart, searchQuery }) {
+  const sectionTitle = searchQuery
+    ? `Search results for "${searchQuery}"`
+    : activeCategory === "home"
+      ? "Featured Books"
+      : activeCategory;
   const [shownBooks, setShownBooks] = useState([]);
   const [shownTitle, setShownTitle] = useState(sectionTitle);
   const [coverMap, setCoverMap] = useState(new Map());
@@ -39,11 +43,18 @@ export default function HomePage({ activeCategory, setActiveCategory, books, add
             </div>
           </div>
           <div className="bg-white shadow-[0_1px_8px_rgba(0,0,0,0.12)]">
-            {shownBooks.length ? (
-              <ProductGrid books={shownBooks} addToCart={addToCart} cart={cart} coverMap={coverMap} />
-            ) : (
+            {loadingCovers ? (
               <div className="grid min-h-[455px] place-items-center p-7 text-xl font-black text-ebookGreen">
                 Loading real book covers...
+              </div>
+            ) : shownBooks.length ? (
+              <ProductGrid books={shownBooks} addToCart={addToCart} cart={cart} coverMap={coverMap} />
+            ) : (
+              <div className="grid min-h-[455px] place-items-center p-7 text-center">
+                <div>
+                  <h2 className="text-2xl font-black text-ebookDark">No books found</h2>
+                  <p className="mt-2 text-slate-500">Try another book name, author, or keyword.</p>
+                </div>
               </div>
             )}
           </div>

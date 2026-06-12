@@ -5,7 +5,6 @@ import CartPage from "./pages/CartPage";
 import PaymentPage from "./pages/PaymentPage";
 import LibraryPage from "./pages/LibraryPage";
 import ReaderPage from "./pages/ReaderPage";
-import ListingPage from "./pages/ListingPage";
 import DetailPage from "./pages/DetailPage";
 import { CART_KEY, CURRENT_BOOK_KEY, HISTORY_KEY, LIBRARY_KEY, booksByCategory, preloadBookCovers } from "./data/catalog";
 import { readStorage, writeStorage } from "./utils/storage";
@@ -16,6 +15,8 @@ export default function App() {
   const [cart, setCart] = useState(() => readStorage(CART_KEY));
   const [library, setLibrary] = useState(() => readStorage(LIBRARY_KEY));
   const [history, setHistory] = useState(() => readStorage(HISTORY_KEY));
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [toast, setToast] = useState("");
 
   useEffect(() => {
@@ -30,7 +31,8 @@ export default function App() {
 
   const allBooks = useMemo(() => Object.values(booksByCategory).flat(), []);
   const homeBooks = useMemo(() => Object.values(booksByCategory).map((books) => books[0]).slice(0, 8), []);
-  const visibleBooks = activeCategory === "home" ? homeBooks : booksByCategory[activeCategory] || homeBooks;
+  const categoryBooks = activeCategory === "home" ? homeBooks : booksByCategory[activeCategory] || homeBooks;
+  const visibleBooks = searchQuery ? searchResults : categoryBooks;
 
   useEffect(() => {
     Object.values(booksByCategory).forEach((books) => preloadBookCovers(books));
@@ -52,6 +54,40 @@ export default function App() {
 
   const removeFromCart = (id) => {
     setCart(cart.filter((item) => item.id !== id));
+  };
+
+  const searchBooks = (query, searchBy) => {
+    const normalizedQuery = query.trim().toLowerCase();
+    if (!normalizedQuery) {
+      showToast("Enter something to search");
+      return;
+    }
+
+    const matches = allBooks.filter((book) => {
+      if (searchBy === "author") return book.author.toLowerCase().includes(normalizedQuery);
+      if (searchBy === "keywords") {
+        return [
+          book.title,
+          book.author,
+          book.category,
+          book.description,
+          book.language,
+          book.isbn,
+        ].some((value) => String(value).toLowerCase().includes(normalizedQuery));
+      }
+      return book.title.toLowerCase().includes(normalizedQuery);
+    });
+
+    const uniqueMatches = Array.from(new Map(matches.map((book) => [book.id, book])).values());
+    setSearchResults(uniqueMatches);
+    setSearchQuery(query.trim());
+    location.hash = "#/home";
+  };
+
+  const selectCategory = (category) => {
+    setSearchQuery("");
+    setSearchResults([]);
+    setActiveCategory(category);
   };
 
   const readBook = (book) => {
@@ -85,21 +121,21 @@ export default function App() {
 
   return (
     <>
-      <Header cartCount={cart.length} />
+      <Header cartCount={cart.length} onSearch={searchBooks} />
       {route === "home" && (
         <HomePage
           activeCategory={activeCategory}
-          setActiveCategory={setActiveCategory}
+          setActiveCategory={selectCategory}
           books={visibleBooks}
           addToCart={addToCart}
           cart={cart}
+          searchQuery={searchQuery}
         />
       )}
       {route === "cart" && <CartPage cart={cart} removeFromCart={removeFromCart} />}
       {route === "payment" && <PaymentPage cart={cart} completePayment={completePayment} />}
       {route === "library" && <LibraryPage library={library} history={history} readBook={readBook} allBooks={allBooks} />}
       {route === "reader" && <ReaderPage />}
-      {route === "listing" && <ListingPage books={allBooks} addToCart={addToCart} cart={cart} />}
       {route === "detail" && <DetailPage book={allBooks[0]} addToCart={addToCart} />}
       {toast && <div className="fixed bottom-6 left-1/2 z-50 w-max max-w-[calc(100%_-_32px)] -translate-x-1/2 rounded-lg bg-ebookGreen px-6 py-3 text-center text-lg font-black text-white shadow-xl">{toast}</div>}
     </>
