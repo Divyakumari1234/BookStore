@@ -93,7 +93,7 @@ export default function CartPage({ cart, removeFromCart }) {
       <section className="mx-auto mb-9 grid w-[min(1230px,calc(100%_-_36px))] grid-cols-3 gap-8 max-[980px]:max-w-xl max-[980px]:grid-cols-1 max-sm:gap-5">
         <InfoBox title="Digital Content" text="You can access all ebooks instantly in your account after successful payment. There is no door delivery." />
         <InfoBox title="Secure Payment" text="100% secure demo checkout flow for student project presentation." />
-        <InfoBox title="Contact" text="Mail Id: info@ebookselibrary.com or call 9528447153 [10AM to 8PM]" />
+        <InfoBox title="Contact" text="Email: support@ebooks.com or call 1111111111 [10AM to 8PM]" />
       </section>
       <CategoryDirectory />
       <SiteFooter />

@@ -10,7 +10,7 @@ export default function Header({ cartCount }) {
           <span>E-Books</span>
         </a>
 
-        <div className="w-full">
+        <div className="min-w-0 w-full">
           <div className="mb-1 flex flex-wrap items-center gap-2 text-[15px] text-zinc-900">
             <strong>Search By:</strong>
             {["Books", "Author", "Keywords"].map((label, index) => (
@@ -19,7 +19,7 @@ export default function Header({ cartCount }) {
               </label>
             ))}
           </div>
-          <div className="flex h-11 items-stretch max-sm:h-auto max-sm:flex-wrap max-sm:gap-3">
+          <div className="flex h-11 min-w-0 items-stretch max-sm:h-auto max-sm:flex-wrap max-sm:gap-3">
             <input className="min-w-0 flex-1 border border-ebookGreen px-4 text-lg text-slate-500 outline-none max-sm:h-11 max-sm:min-w-full" type="search" placeholder="Search" />
             <button className="bg-ebookGreen px-6 text-base font-black text-white shadow-[4px_5px_10px_rgba(0,0,0,0.20)] max-sm:h-11" type="button">Search</button>
             <a className="relative ml-5 inline-flex items-center gap-2 rounded-md px-2 text-base font-black leading-tight text-ebookGreen no-underline transition hover:bg-emerald-50 max-sm:ml-0 max-sm:h-11" href="#/cart">

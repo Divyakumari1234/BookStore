@@ -101,7 +101,7 @@ export default function App() {
       {route === "reader" && <ReaderPage />}
       {route === "listing" && <ListingPage books={allBooks} addToCart={addToCart} cart={cart} />}
       {route === "detail" && <DetailPage book={allBooks[0]} addToCart={addToCart} />}
-      {toast && <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-lg bg-ebookGreen px-6 py-3 text-lg font-black text-white shadow-xl">{toast}</div>}
+      {toast && <div className="fixed bottom-6 left-1/2 z-50 w-max max-w-[calc(100%_-_32px)] -translate-x-1/2 rounded-lg bg-ebookGreen px-6 py-3 text-center text-lg font-black text-white shadow-xl">{toast}</div>}
     </>
   );
 }
